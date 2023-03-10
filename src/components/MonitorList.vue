@@ -10,7 +10,8 @@
                     <font-awesome-icon icon="times" />
                 </a>
                 <form>
-                    <input v-model="searchText" class="form-control search-input" :placeholder="$t('Search...')" autocomplete="off" />
+                    <input v-model="searchText" class="form-control search-input" :placeholder="$t('Search...')"
+                        autocomplete="off" />
                 </form>
             </div>
         </div>
@@ -19,12 +20,15 @@
                 {{ $t("No Monitors, please") }} <router-link to="/add">{{ $t("add one") }}</router-link>
             </div>
 
-            <router-link v-for="(item, index) in sortedMonitorList" :key="index" :to="monitorURL(item.id)" class="item" :class="{ 'disabled': ! item.active }" :title="item.description">
+            <router-link v-for="(item, index) in sortedMonitorList" :key="index" :to="monitorURL(item.id)" class="item"
+                :class="{ 'disabled': !item.active }" :title="item.description">
                 <div class="row">
-                    <div class="col-9 col-md-8 small-padding" :class="{ 'monitor-item': $root.userHeartbeatBar == 'bottom' || $root.userHeartbeatBar == 'none' }">
+                    <div class="col-9 col-md-8 small-padding"
+                        :class="{ 'monitor-item': $root.userHeartbeatBar == 'bottom' || $root.userHeartbeatBar == 'none' }">
                         <div class="info">
-                            <Uptime :monitor="item" type="24" :pill="true" />
+                            <Uptime :monitor="item" type="24" :pill="true" />                            
                             {{ item.name }}
+                            <Jenkins :title="item.name" />                        
                         </div>
                         <div class="tags">
                             <Tag v-for="tag in item.tags" :key="tag" :item="tag" :size="'sm'" />
@@ -46,6 +50,7 @@
 </template>
 
 <script>
+import Jenkins from "../components/Jenkins.vue"
 import HeartbeatBar from "../components/HeartbeatBar.vue";
 import Tag from "../components/Tag.vue";
 import Uptime from "../components/Uptime.vue";
@@ -56,6 +61,7 @@ export default {
         Uptime,
         HeartbeatBar,
         Tag,
+        Jenkins,
     },
     props: {
         /** Should the scrollbar be shown */
@@ -122,8 +128,8 @@ export default {
                 const loweredSearchText = this.searchText.toLowerCase();
                 result = result.filter(monitor => {
                     return monitor.name.toLowerCase().includes(loweredSearchText)
-                    || monitor.tags.find(tag => tag.name.toLowerCase().includes(loweredSearchText)
-                    || tag.value?.toLowerCase().includes(loweredSearchText));
+                        || monitor.tags.find(tag => tag.name.toLowerCase().includes(loweredSearchText)
+                            || tag.value?.toLowerCase().includes(loweredSearchText));
                 });
             }
 

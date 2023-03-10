@@ -1,0 +1,49 @@
+# Simple docker-compose.yml
+# You can change your port or volume location
+
+version: '3.3'
+
+networks:
+  uptime-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.55.0/24
+          gateway: 192.168.55.1
+
+services:
+  uptime-sam:
+    image: uptime-sam
+    container_name: uptime-sam
+    volumes:
+      - ./.data/:/app/data/
+    environment:      
+      - SERVER_PORT=7896
+      - SERVER=192.168.55.12
+    ports:
+      - 3001:3001
+    # networks:
+    #   uptime-net:
+    #     ipv4_address: 192.168.55.10
+    restart: always
+
+  jenkins:
+    image: jenkins-fetcher
+    container_name: jenkins-fetcher
+    volumes:
+      - ./.data/:/app/data/
+    environment:
+      - USERNAME=${JENKINS_USERNAME}
+      - PASSWORD=${JENKINS_PASSWORD}
+      - URL=https://jenkins.ci.securingsam.io/lockable-resources/api/json
+      - FILE_NAME=/app/data/rpi.json
+      - INTERVAL=60
+      - PORT=7896
+    ports:
+      - 7896:7896
+    # networks:
+    #       uptime-net:
+    #         ipv4_address: 192.168.55.12
+    restart: always
+
